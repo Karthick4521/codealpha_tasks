@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simple URL Shortener</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <button id="themeToggle" title="Toggle theme">🌙</button>
+
+    <div class="container" id="mainCard">
+        <h1>🔗 Simple URL Shortener</h1>
+        <p class="subtitle">Paste a long URL below and get a short link instantly.</p>
+
+        <form id="shortenForm">
+            <input type="text" id="urlInput" placeholder="https://example.com/very/long/link" required>
+            <button type="submit" id="shortenBtn">
+                <span id="btnText">Shorten</span>
+                <span id="btnSpinner" class="spinner hidden"></span>
+            </button>
+        </form>
+
+        <div id="result" class="result hidden">
+            <p>Your shortened URL:</p>
+            <div class="short-url-box">
+                <a id="shortUrlLink" href="#" target="_blank"></a>
+                <button id="copyBtn" type="button">Copy</button>
+            </div>
+        </div>
+
+        <div id="errorBox" class="error hidden"></div>
+
+        <hr>
+
+        <h2>Recently Shortened URLs</h2>
+        <table id="urlTable">
+            <thead>
+                <tr>
+                    <th>Short URL</th>
+                    <th>Original URL</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody id="urlTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="toast" class="toast hidden">Copied to clipboard!</div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
