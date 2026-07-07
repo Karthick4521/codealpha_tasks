@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Menu - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <div>
+            <h1>Our Menu</h1>
+            <p>Browse dishes by category</p>
+        </div>
+        {% if current_user.is_admin %}
+        <a href="{{ url_for('create_menu_item') }}" class="btn-primary" style="width: auto; padding: 12px 24px;">+ Add Menu Item</a>
+        {% endif %}
+    </div>
+
+    {% for category, items in categorized.items() %}
+    <div class="section-title"><span>{{ category }}</span></div>
+    <div class="card-grid">
+        {% for item in items %}
+        <div class="item-card">
+            <h3>{{ item.name }}</h3>
+            <div class="item-meta">
+                <span>{{ item.description }}</span>
+                {% if item.ingredient_name %}
+                <span>🧂 Uses: {{ item.ingredient_name }}</span>
+                {% endif %}
+            </div>
+            <div class="price-tag">₹{{ "%.0f"|format(item.price) }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if not categorized %}
+    <div class="empty-state"><div class="empty-icon">🍽️</div><p>No menu items yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

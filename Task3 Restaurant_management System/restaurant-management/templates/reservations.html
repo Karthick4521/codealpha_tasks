@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Reservations - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header"><div><h1>Reservations</h1><p>Book tables and manage guest arrivals</p></div></div>
+
+    <div class="order-builder">
+        <h3 style="margin-bottom: 16px; color: #7a4a15;">New Reservation</h3>
+        <form method="POST" action="{{ url_for('create_reservation') }}">
+            <div class="order-line" style="grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" name="customer_name" placeholder="Guest name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" name="phone" placeholder="Contact number">
+                </div>
+            </div>
+            <div class="order-line" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="form-group">
+                    <label>Table</label>
+                    <select name="table_id" required>
+                        {% for table in tables %}
+                        <option value="{{ table.id }}" {% if table.status == 'occupied' %}disabled{% endif %}>
+                            Table {{ table.table_number }} ({{ table.capacity }} seats) — {{ table.status }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Party Size</label>
+                    <input type="number" name="party_size" min="1" value="2" required>
+                </div>
+                <div class="form-group">
+                    <label>Date &amp; Time</label>
+                    <input type="datetime-local" name="reservation_time" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="width: auto; padding: 12px 28px;">Reserve Table</button>
+        </form>
+    </div>
+
+    <div class="section-title"><span>All Reservations</span></div>
+    {% if reservations %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Guest</th><th>Table</th><th>Party</th><th>Time</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for res in reservations %}
+            <tr>
+                <td>{{ res.customer_name }}{% if res.phone %} <span style="color:#a8896a;">· {{ res.phone }}</span>{% endif %}</td>
+                <td>Table {{ res.table_number }}</td>
+                <td>{{ res.party_size }}</td>
+                <td>{{ res.reservation_time.strftime('%d %b %Y, %I:%M %p') }}</td>
+                <td><span class="badge {{ res.status }}">{{ res.status }}</span></td>
+                <td>
+                    {% if res.status == 'upcoming' %}
+                    <form method="POST" action="{{ url_for('seat_reservation', res_id=res.id) }}" class="inline-form">
+                        <button type="submit" class="btn-outline btn-small">Seat Guests</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('cancel_reservation', res_id=res.id) }}" class="inline-form">
+                        <button type="submit" class="btn-danger btn-small">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">📅</div><p>No reservations yet.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

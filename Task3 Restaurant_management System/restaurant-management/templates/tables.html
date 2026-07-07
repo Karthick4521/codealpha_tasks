@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Tables - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header"><div><h1>Table Status</h1><p>Live view of all restaurant tables</p></div></div>
+
+    <div class="card-grid">
+        {% for table in tables %}
+        <div class="item-card" style="text-align: center;">
+            <span class="badge {{ table.status }}">{{ table.status }}</span>
+            <div class="table-number">#{{ table.table_number }}</div>
+            <div class="item-meta" style="align-items: center; margin-bottom: 16px;">
+                <span>👥 Seats {{ table.capacity }}</span>
+            </div>
+            {% if table.status != 'available' %}
+            <form method="POST" action="{{ url_for('free_table', table_id=table.id) }}" class="inline-form">
+                <button type="submit" class="btn-outline btn-small">Mark Available</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

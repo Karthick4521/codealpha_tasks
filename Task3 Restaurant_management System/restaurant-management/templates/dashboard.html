@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <div>
+            <h1>Good day, {{ current_user.username }} 👨‍🍳</h1>
+            <p>Here's how TastePoint is doing today</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value">₹{{ "%.0f"|format(stats.todays_sales) }}</div>
+            <div class="stat-label">Today's Sales</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🍳</div>
+            <div class="stat-value">{{ stats.active_orders }}</div>
+            <div class="stat-label">Active Orders</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">{{ stats.todays_reservations }}</div>
+            <div class="stat-label">Today's Reservations</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value">{{ stats.low_stock_count }}</div>
+            <div class="stat-label">Low Stock Alerts</div>
+        </div>
+    </div>
+
+    {% if low_stock_items %}
+    <div class="section-title"><span>⚠️ Low Stock Alerts</span>
+        {% if current_user.is_admin %}<a href="{{ url_for('inventory') }}">Manage inventory →</a>{% endif %}
+    </div>
+    <div class="card-grid">
+        {% for item in low_stock_items %}
+        <div class="item-card">
+            <span class="badge low-stock">Low Stock</span>
+            <h3 style="margin-top: 10px;">{{ item.name }}</h3>
+            <div class="item-meta">
+                <span>📦 {{ item.quantity }} {{ item.unit }} remaining</span>
+                <span>🔔 Threshold: {{ item.low_stock_threshold }} {{ item.unit }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section-title"><span>🍽️ Table Status</span>
+        <a href="{{ url_for('tables') }}">View all →</a>
+    </div>
+    <div class="card-grid">
+        {% for table in tables %}
+        <div class="item-card" style="text-align: center;">
+            <span class="badge {{ table.status }}">{{ table.status }}</span>
+            <div class="table-number">#{{ table.table_number }}</div>
+            <div class="item-meta" style="align-items: center;">
+                <span>👥 Seats {{ table.capacity }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="section-title"><span>🧾 Recent Orders</span>
+        <a href="{{ url_for('orders') }}">View all →</a>
+    </div>
+    {% if recent_orders %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Order #</th><th>Table</th><th>Status</th><th>Total</th><th>Time</th></tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td><a href="{{ url_for('order_detail', order_id=order.id) }}" style="color:#c96a1f; text-decoration:none; font-weight:600;">#{{ order.id }}</a></td>
+                <td>Table {{ order.table_number }}</td>
+                <td><span class="badge {{ order.status }}">{{ order.status }}</span></td>
+                <td>₹{{ "%.0f"|format(order.total_amount) }}</td>
+                <td>{{ order.created_at.strftime('%d %b, %I:%M %p') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">🧾</div><p>No orders yet today.</p></div>
+    {% endif %}
+
+    <div class="section-title"><span>📅 Upcoming Reservations</span>
+        <a href="{{ url_for('reservations') }}">View all →</a>
+    </div>
+    {% if upcoming_reservations %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Guest</th><th>Table</th><th>Party Size</th><th>Time</th></tr>
+        </thead>
+        <tbody>
+            {% for res in upcoming_reservations %}
+            <tr>
+                <td>{{ res.customer_name }}</td>
+                <td>Table {{ res.table_number }}</td>
+                <td>{{ res.party_size }}</td>
+                <td>{{ res.reservation_time.strftime('%d %b, %I:%M %p') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><div class="empty-icon">📅</div><p>No upcoming reservations.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

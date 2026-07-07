@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Inventory - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header"><div><h1>Inventory</h1><p>Track stock levels and restock ingredients</p></div></div>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>Ingredient</th><th>Current Stock</th><th>Threshold</th><th>Status</th><th>Restock</th></tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }} {{ item.unit }}</td>
+                <td>{{ item.low_stock_threshold }} {{ item.unit }}</td>
+                <td>
+                    {% if item.quantity <= item.low_stock_threshold %}
+                    <span class="badge low-stock">Low Stock</span>
+                    {% else %}
+                    <span class="badge available">Good</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('restock_inventory', item_id=item.id) }}" style="display: flex; gap: 8px;">
+                        <input type="number" name="amount" placeholder="Add qty" min="0" step="0.1" style="width: 100px; padding: 8px; border-radius: 6px; border: 1px solid rgba(196,132,42,0.3);">
+                        <button type="submit" class="btn-outline btn-small">Restock</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

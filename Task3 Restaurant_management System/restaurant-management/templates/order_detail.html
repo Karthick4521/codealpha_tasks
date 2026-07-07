@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }} - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <a href="{{ url_for('orders') }}" class="btn-outline" style="margin-bottom: 24px;">← Back to Orders</a>
+
+    <div class="detail-card">
+        <span class="badge {{ order.status }}">{{ order.status }}</span>
+        <h1 style="margin-top: 14px; color:#7a4a15;">Order #{{ order.id }}</h1>
+
+        <div class="detail-meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Table</div>
+                <div class="meta-value">Table {{ order.table_number }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Placed At</div>
+                <div class="meta-value">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+            </div>
+        </div>
+
+        <table class="data-table" style="margin-bottom: 10px;">
+            <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ "%.0f"|format(item.price_at_order) }}</td>
+                    <td>₹{{ "%.0f"|format(item.price_at_order * item.quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-row">
+            <span>Total</span>
+            <span>₹{{ "%.0f"|format(order.total_amount) }}</span>
+        </div>
+
+        {% if order.status not in ['paid', 'cancelled'] %}
+        <div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
+            {% if order.status == 'pending' %}
+            <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="inline-form">
+                <input type="hidden" name="status" value="preparing">
+                <button type="submit" class="btn-outline">Mark Preparing</button>
+            </form>
+            {% endif %}
+            {% if order.status == 'preparing' %}
+            <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="inline-form">
+                <input type="hidden" name="status" value="served">
+                <button type="submit" class="btn-outline">Mark Served</button>
+            </form>
+            {% endif %}
+            {% if order.status == 'served' %}
+            <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="inline-form">
+                <input type="hidden" name="status" value="paid">
+                <button type="submit" class="btn-primary" style="width:auto; padding: 10px 24px;">Mark Paid</button>
+            </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="inline-form">
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="btn-danger">Cancel Order</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

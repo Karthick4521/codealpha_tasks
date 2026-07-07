@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Add Menu Item - TastePoint{% endblock %}
+{% block content %}
+<div class="page-wrapper" style="max-width: 650px;">
+    <div class="page-header"><div><h1>Add Menu Item</h1><p>Add a new dish to the menu</p></div></div>
+
+    <div class="detail-card">
+        <form method="POST">
+            <div class="form-group">
+                <label>Dish Name</label>
+                <input type="text" name="name" placeholder="e.g. Chicken Biryani" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Brief description of the dish..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <input type="text" name="category" placeholder="e.g. Main Course, Starters, Desserts" required>
+            </div>
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="number" name="price" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label>Linked Ingredient (for inventory tracking)</label>
+                <select name="inventory_item_id">
+                    <option value="">— None —</option>
+                    {% for inv in inventory_items %}
+                    <option value="{{ inv.id }}">{{ inv.name }} ({{ inv.quantity }} {{ inv.unit }} in stock)</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Quantity Used Per Order</label>
+                <input type="number" name="qty_per_order" step="0.01" min="0" value="1">
+            </div>
+            <button type="submit" class="btn-primary">Add to Menu</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
