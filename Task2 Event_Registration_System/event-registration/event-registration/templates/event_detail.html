@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} - EventHub{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <a href="{{ url_for('events') }}" class="btn-outline" style="margin-bottom: 24px; padding: 8px 18px; font-size: 13px;">← Back to Events</a>
+
+    <div class="detail-card">
+        {% if is_registered %}
+            <span class="event-badge registered">✓ You're registered</span>
+        {% elif event.spots_left <= 0 %}
+            <span class="event-badge full">Event Full</span>
+        {% else %}
+            <span class="event-badge">{{ event.spots_left }} of {{ event.capacity }} spots left</span>
+        {% endif %}
+
+        <h1 style="margin-top: 16px;">{{ event.title }}</h1>
+
+        <div class="detail-meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Date & Time</div>
+                <div class="meta-value">🗓️ {{ event.event_date.strftime('%d %b %Y, %I:%M %p') }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Location</div>
+                <div class="meta-value">📍 {{ event.location }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Organizer</div>
+                <div class="meta-value">👤 {{ event.organizer_username }}</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Capacity</div>
+                <div class="meta-value">👥 {{ event.registered_count }} / {{ event.capacity }}</div>
+            </div>
+        </div>
+
+        <p class="detail-description">{{ event.description }}</p>
+
+        {% if is_registered %}
+        <form method="POST" action="{{ url_for('cancel_registration', event_id=event.id) }}" class="inline-form">
+            <button type="submit" class="btn-danger">Cancel Registration</button>
+        </form>
+        {% elif event.spots_left > 0 %}
+        <form method="POST" action="{{ url_for('register_for_event', event_id=event.id) }}" class="inline-form">
+            <button type="submit" class="btn-primary" style="width: auto; padding: 13px 32px;">Register for this Event</button>
+        </form>
+        {% else %}
+        <button class="btn-outline" disabled style="opacity: 0.5; cursor: not-allowed;">Event is Full</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

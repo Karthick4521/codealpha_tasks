@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Sign Up - EventHub{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">🎟️</div>
+        <h1>Create Account</h1>
+        <p class="auth-subtitle">Join EventHub to discover and register for events</p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Choose a username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Create a password" required>
+            </div>
+            <div class="checkbox-row">
+                <input type="checkbox" name="is_organizer" id="is_organizer">
+                <label for="is_organizer">I want to create and organize events</label>
+            </div>
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <p class="auth-footer">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}EventHub{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="bg-shapes"><span></span><span></span><span></span><span></span></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if current_user.is_authenticated %}
+    <div class="navbar">
+        <div class="brand">🎟️ EventHub</div>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('events') }}">Browse Events</a>
+            {% if current_user.is_organizer %}
+            <a href="{{ url_for('create_event') }}">+ Create Event</a>
+            {% endif %}
+            <div class="user-chip">
+                <div class="avatar-circle">{{ current_user.username[0]|upper }}</div>
+                {{ current_user.username }}
+            </div>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.flash').forEach(f => {
+                f.style.transition = 'opacity 0.4s ease';
+                f.style.opacity = '0';
+                setTimeout(() => f.remove(), 400);
+            });
+        }, 3500);
+    </script>
+</body>
+</html>

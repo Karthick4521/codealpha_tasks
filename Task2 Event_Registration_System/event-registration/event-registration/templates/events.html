@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Browse Events - EventHub{% endblock %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1>Browse Events</h1>
+        <p>Discover and register for upcoming events</p>
+    </div>
+
+    {% if events %}
+    <div class="events-grid">
+        {% for event in events %}
+        <a href="{{ url_for('event_detail', event_id=event.id) }}" class="event-card">
+            {% if event.id in my_event_ids %}
+                <span class="event-badge registered">✓ Registered</span>
+            {% elif event.spots_left <= 0 %}
+                <span class="event-badge full">Full</span>
+            {% else %}
+                <span class="event-badge">{{ event.spots_left }} spots left</span>
+            {% endif %}
+            <h3 style="margin-top: 12px;">{{ event.title }}</h3>
+            <div class="event-meta">
+                <span>📍 {{ event.location }}</span>
+                <span>🗓️ {{ event.event_date.strftime('%d %b %Y, %I:%M %p') }}</span>
+                <span>👤 by {{ event.organizer_username }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>No events available yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

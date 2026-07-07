@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Login - EventHub{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">🎟️</div>
+        <h1>Welcome Back</h1>
+        <p class="auth-subtitle">Log in to manage your event registrations</p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter your username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-primary">Log In</button>
+        </form>
+
+        <p class="auth-footer">Don't have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
+
+        <div class="demo-hint">
+            💡 Demo organizer login — Username: <strong>organizer</strong> · Password: <strong>organizer123</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}
